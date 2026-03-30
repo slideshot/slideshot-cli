@@ -8,9 +8,7 @@ Prefer:
 npx -y slideshot-cli <command>
 ```
 
-If the `slideshot` binary is already installed and clearly intended, using `slideshot <command>` is equivalent.
-
-If a maintainer explicitly prefers pnpm in their local environment, `pnpm dlx slideshot-cli <command>` is equivalent, but user-facing examples should prefer `npx -y slideshot-cli`.
+If the `slideshot` binary is already installed and clearly intended, using `slideshot <command>` is equivalent. Otherwise, agent should prefer `npx -y slideshot-cli`.
 
 The CLI defaults to compact JSON output for automation. Add `--output text` only when a human-readable response is more useful than a machine-readable one.
 
@@ -19,6 +17,7 @@ The CLI defaults to compact JSON output for automation. Add `--output text` only
 Prefer API-key auth for automated run execution. Use a signed-in user session when you need account-scoped commands such as `runs list` or `feedback`.
 
 Session login:
+Right now the login only supports email+password login which the user need to enter.
 
 ```bash
 npx -y slideshot-cli auth login --email you@example.com
@@ -40,7 +39,7 @@ Notes:
 
 ## Saved credentials for the target app
 
-Create a credential before the run when the target app requires login and the user has already provided valid credentials.
+Create a credential before the run when the target app requires login and the user has already provided valid credentials. But you should check if the user already has default credentials before creating a new set.
 
 ```bash
 npx -y slideshot-cli credentials create \
@@ -216,7 +215,6 @@ When a run fails:
 Common fixes:
 
 - If login failed, create or correct the saved credential and retry.
-- If the runner reached the wrong area of the app, rewrite the goal so the sequence and end state are explicit.
 - If the app needs a very specific workspace, tenant, or seeded record, state that directly in the goal.
 - If the run hit an OTP or magic-link prompt, continue it with `runs input` rather than creating a fresh run.
 
