@@ -14,32 +14,50 @@ The CLI defaults to compact JSON output for automation. Add `--output text` only
 
 ## Authentication
 
-Prefer API-key auth for automated run execution. Use a signed-in user session when you need account-scoped commands such as `runs list` or `feedback`.
+Prefer login over API-key-only setup. A stored login gives the user session and usually also a local API key, which covers more CLI workflows than an API key by itself.
 
-Session login:
-Right now the login only supports email+password login which the user need to enter.
+Before running a login command, ask whether the user already has a Slideshot account or wants to set one up now.
+
+Preferred login flow when supported by the installed CLI:
+
+```bash
+npx -y slideshot-cli auth login --email you@example.com --email-only
+```
+
+Use email+password when the user already has a password, explicitly wants that flow, or the installed CLI build does not expose `--email-only`:
 
 ```bash
 npx -y slideshot-cli auth login --email you@example.com
+printf '%s' 'secret' | npx -y slideshot-cli auth login --email you@example.com --password-stdin
 ```
 
-Store or inspect an API key:
+Store or inspect an API key only when the user explicitly wants key-only auth or already has a key:
 
 ```bash
 npx -y slideshot-cli auth set-key srk_...
-npx -y slideshot-cli auth status --output text
+npx -y slideshot-cli auth status
 npx -y slideshot-cli auth env --shell sh --output text
 ```
 
 Notes:
 
+- `auth status` is the quickest way to discover whether the CLI already has a stored user session, a stored API key, and which auth file path is in use.
+- `auth login` stores the user session locally and creates a local API key by default unless `--skip-api-key` is passed.
+- Default to `--email-only` when available because it matches Slideshot's passwordless behavior and can create the account if it does not already exist.
+- If the installed CLI help on the machine does not show `--email-only`, use the best available login flow on that build and mention the mismatch.
 - Command auth resolution prefers `--api-key`, then `SLIDESHOT_API_KEY`, then a stored local API key, then a stored user session when the command supports it.
 - `runs list` and `feedback` require a signed-in user session.
-- `runs create` can bootstrap a local API key from a stored user session if needed.
+- `runs create` can bootstrap a local API key from a stored user session if needed, but API-key-only auth still lacks account-scoped commands like `runs list`.
 
 ## Saved credentials for the target app
 
-Create a credential before the run when the target app requires login and the user has already provided valid credentials. But you should check if the user already has default credentials before creating a new set.
+Before creating a login-required run, list saved credentials and check for a matching hostname first. Prefer the default matching credential for that hostname.
+
+```bash
+npx -y slideshot-cli credentials list
+```
+
+Create a credential only when you have no suitable saved credential and the user explicitly wants to add one from the CLI:
 
 ```bash
 npx -y slideshot-cli credentials create \
@@ -63,6 +81,10 @@ Notes:
 - `--domain` should be the hostname only, such as `app.example.com`.
 - Password is optional, so email-only credentials are allowed.
 - Use `--default` when the same hostname should usually reuse one credential.
+- The run target URL hostname should match the saved credential domain. Credential matching is hostname-based.
+- Example: if the saved credential domain is `app.example.com`, prefer a target URL like `https://app.example.com/...` instead of a different hostname that later redirects there.
+- Only ask the user for login details if no matching saved credential exists or the run later requires OTP or magic-link input.
+- When the run requires login and no suitable credential exists, prefer suggesting that the user add credentials securely in the web app at [app.slideshot.ai](https://app.slideshot.ai) instead of pasting long-lived secrets into chat by default.
 
 ## Creating a run
 
@@ -117,7 +139,8 @@ Important details:
 
 - Omit `auth` or use `{ "source": "none" }` when no saved credential should be used.
 - Legacy flat option keys are rejected; use nested `auth` and `video` objects.
-- If the run depends on login and no credential exists yet, create the credential first instead of hoping the runner can improvise.
+- Keep the target URL hostname aligned with the credential domain when the flow depends on saved credentials.
+- If the run depends on login and no credential exists yet, either create the credential intentionally or send the user to [app.slideshot.ai](https://app.slideshot.ai) to add it securely before you create the run.
 
 ## Waiting, status, and input
 

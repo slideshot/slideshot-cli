@@ -1,6 +1,6 @@
 ---
 name: slideshot-cli
-description: Use Slideshot to record demo videos of a web application from a natural language flow description. Use it when the user wants an agent to create a new demo video recording of a target web app, to demonstrate a feature, to record a video of a feature or a specific flow, or to manage Slideshot authentication, past runs, or saved credentials, download demo artifacts, or improve the goal passed to `slideshot-cli`.
+description: Use Slideshot to record demo videos of a web application from a natural language flow description. Use it when the user wants an agent to create a new demo video recording of a target web app, demonstrate a feature or specific flow, manage Slideshot login or API-key auth, reuse saved target-app credentials, cancel runs, download demo artifacts, inspect a specific run, or improve the goal passed to `slideshot-cli`.
 compatibility: Requires Node.js and internet access to run `npx -y slideshot-cli`
 ---
 
@@ -12,16 +12,28 @@ Use this skill when the task is record a demo video of a feature of specified us
 
 1. Prefer `npx -y slideshot-cli ...` unless `slideshot` is already installed and known to be the intended binary.
 2. Keep the CLI in JSON mode by default. Use `--output text` only when you need to present the result directly to the user.
-3. Before creating a run, confirm the target URL, whether the app requires login, and ensure the user describes the flow they wish to record in detail.
-4. If the demo requires login, create or reuse a saved credential for the target hostname before starting the run. Slideshot supports creating login credentials and marking them as default, so that the user doesn't need to remember the ID of the credentials every time they use them when recording a demo. Credentials are also scoped to the domain. 
-5. Write one strong `--goal` that describes a single coherent demo path with a clear end state. If the flow description is not detailed enough, you might want to prompt the user 1-2 times at most to provide more details about certain parts of the flow.
+3. Start with auth preflight when auth state matters:
+   - Run `auth status` first if you need to know whether login, a user session, or an API key is already available locally.
+   - Prefer `auth login` over `auth set-key`. Login is the default because it stores the user session and usually creates a local API key too, which gives broader CLI coverage than an API key alone.
+   - Ask the user whether they already have a Slideshot account or want to set one up before you run the login command.
+   - When the installed CLI supports it, prefer `auth login --email <email> --email-only` by default because it matches Slideshot's passwordless flow and can create the account if it does not exist yet.
+   - Use email+password login when the user already has a password, explicitly prefers that flow, or the CLI build on the machine does not expose `--email-only`.
+   - Use `auth set-key` only when the user explicitly wants API-key-only auth or already has a key and only needs basic run-management commands.
+4. Before creating a run, confirm the target URL, whether the app requires login, and ensure the user describes the flow they wish to record in detail.
+5. If the demo requires login, do credential preflight before starting the run:
+   - Check saved credentials for the target hostname first.
+   - Reuse the matching default credential when it exists.
+   - Make sure the run target URL uses the same hostname as the saved credential domain. Credential matching is hostname-based.
+   - Only ask the user for target-app login details if no suitable saved credential exists or the run later requests OTP or magic-link input.
+   - When there is no suitable saved credential and the run requires stable login secrets, suggest the user add the credentials securely in the web app at [app.slideshot.ai](https://app.slideshot.ai) and continue after that, instead of pasting long-lived secrets into chat by default.
+6. Write one strong `--goal` that describes a single coherent demo path with a clear end state. If the flow description is not detailed enough, you might want to prompt the user 1-2 times at most to provide more details about certain parts of the flow.
    - If the user needs multiple flows, you can kick off each recording run one by one via Slideshot CLI. The runs will enter the queue and will be processed when it's their turn.
-6. Create the run, wait for completion, then branch on the result:
+7. Create the run, wait for completion, then branch on the result:
    - `succeeded`: list artifacts and download the requested files.
    - `awaiting_input`: surface the prompt to the user and continue with `runs input`.
    - `failed` or `cancelled`: inspect status, identify the likely cause, and retry with a better goal, better credentials, or different options.
-7. When the run fails and an issue looks like a product bug or a missing feature, offer to send feedback with the related run ID. The CLI feedback command requires a signed-in user session.
-8. When the run is complete, the user should download the resulting demo video files or at least be informed that they have the option to download the raw video recording or the editing demo video MP4 files.
+8. When the run fails and an issue looks like a product bug or a missing feature, offer to send feedback with the related run ID. The CLI feedback command requires a signed-in user session.
+9. When the run is complete, the user should download the resulting demo video files or at least be informed that they have the option to download the raw video recording or the editing demo video MP4 files.
 
 ## Prerequisites
 
@@ -44,6 +56,8 @@ Use this escalation pattern:
 | Need | Command |
 | --- | --- |
 | Check whether auth is available locally | `auth status` |
+| Sign in with full account access | `auth login` |
+| Store an API key only | `auth set-key` |
 | Create or inspect saved target-app credentials | `credentials ...` |
 | Start a new demo recording run | `runs create` |
 | Poll until the run finishes or needs help | `runs wait` |
@@ -100,5 +114,7 @@ Weak:
 - `runs wait` exits with deterministic terminal codes, so treat it as the main control point for automation.
 - When a run is blocked on OTP or magic-link input, continue the existing run with `runs input` instead of starting over.
 - Avoid redundant reruns. If a run already succeeded, download artifacts from that run instead of creating another one. If it is awaiting input, continue it instead of replacing it.
+- Saved credential matching depends on the target URL hostname matching the credential domain.
+- Email-only saved credentials are valid because target-app credential passwords are optional.
 
 See [the reference guide](references/REFERENCE.md) for concrete commands, option JSON examples, and failure-recovery patterns.
