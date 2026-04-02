@@ -141,21 +141,13 @@ Important details:
 - Legacy flat option keys are rejected; use nested `auth` and `video` objects.
 - Keep the target URL hostname aligned with the credential domain when the flow depends on saved credentials.
 - If the run depends on login and no credential exists yet, either create the credential intentionally or send the user to [app.slideshot.ai](https://app.slideshot.ai) to add it securely before you create the run.
+- If the user has not specified any video styling choices yet, ask once before creating the run whether they want:
+  - `video.blur_emails`
+  - `video.shortcuts`
+  - `video.background` with `none`, `solid`, or `gradient`
+- If the user says they have no preference, keep the defaults by omitting those keys instead of inventing style choices.
 
-## Waiting, status, and input
-
-Wait for completion:
-
-```bash
-npx -y slideshot-cli runs wait <run-id>
-```
-
-Terminal exit codes for `runs wait`:
-
-- `0`: succeeded
-- `10`: awaiting input
-- `11`: failed
-- `12`: cancelled
+## Status, input, and the web app
 
 Inspect one run:
 
@@ -170,6 +162,18 @@ npx -y slideshot-cli runs input <run-id> --value "123456"
 ```
 
 The most common awaiting-input cases are authentication OTPs or magic-link flows.
+
+After creating a run:
+
+1. Return the `run_id` to the user.
+2. Tell the user to monitor progress in the web app at [app.slideshot.ai](https://app.slideshot.ai).
+3. If useful, open the web app in the system browser. Example on macOS:
+
+```bash
+open https://app.slideshot.ai
+```
+
+4. Do not keep polling automatically. Wait for the user to ask you to inspect a specific run, provide input for a specific run, cancel it, or download artifacts after completion.
 
 ## Artifacts
 
@@ -214,7 +218,6 @@ Useful command IDs include:
 
 - `runs.create`
 - `runs.status`
-- `runs.wait`
 - `runs.list`
 - `runs.cancel`
 - `runs.input`
@@ -240,6 +243,11 @@ Common fixes:
 - If login failed, create or correct the saved credential and retry.
 - If the app needs a very specific workspace, tenant, or seeded record, state that directly in the goal.
 - If the run hit an OTP or magic-link prompt, continue it with `runs input` rather than creating a fresh run.
+- If the run is no longer wanted or was created with the wrong goal, cancel it instead of waiting for it to finish:
+
+```bash
+npx -y slideshot-cli runs cancel <run-id>
+```
 
 ## Feedback
 
@@ -253,3 +261,4 @@ Important:
 
 - The CLI `feedback` command uses the signed-in user session, not just an API key.
 - If only an API key is configured, ask the user whether they want to sign in first so the feedback can be submitted from the CLI.
+- If the user is generally frustrated or has a feature request, you can still use `feedback` even if the issue is not tied to a failed run.
