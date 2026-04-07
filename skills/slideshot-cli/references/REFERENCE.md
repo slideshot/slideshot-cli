@@ -166,14 +166,15 @@ The most common awaiting-input cases are authentication OTPs or magic-link flows
 After creating a run:
 
 1. Return the `run_id` to the user.
-2. Tell the user to monitor progress in the web app at [app.slideshot.ai](https://app.slideshot.ai).
-3. If useful, open the web app in the system browser. Example on macOS:
+2. Tell the user to monitor that specific run in the web app at `https://app.slideshot.ai/?runId=<run-id>`.
+3. If useful, open that specific run URL in the system browser. Example on macOS:
 
 ```bash
-open https://app.slideshot.ai
+open "https://app.slideshot.ai/?runId=<run-id>"
 ```
 
-4. Do not keep polling automatically. Wait for the user to ask you to inspect a specific run, provide input for a specific run, cancel it, or download artifacts after completion.
+4. If multiple runs were created, provide one per-run URL for each run and open each individual URL if browser opening is useful.
+5. Do not keep polling automatically. Wait for the user to ask you to inspect a specific run, provide input for a specific run, cancel it, or download artifacts after completion.
 
 ## Artifacts
 

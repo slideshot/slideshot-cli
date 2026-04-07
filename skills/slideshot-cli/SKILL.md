@@ -35,8 +35,9 @@ Use this skill when the task is record a demo video of a feature of specified us
    - If the user needs multiple flows, you can kick off each recording run one by one via Slideshot CLI. The runs will enter the queue and will be processed when it's their turn.
 8. After creating a run:
    - Tell the user the run ID.
-   - Instruct the user to monitor progress in the web app at [app.slideshot.ai](https://app.slideshot.ai).
-   - If it helps, open the web app for them in the system browser with a shell command such as `open https://app.slideshot.ai` on macOS.
+   - Instruct the user to monitor that specific run in the web app at `https://app.slideshot.ai/?runId=<run-id>`.
+   - If it helps, open that specific run URL for them in the system browser with a shell command such as `open "https://app.slideshot.ai/?runId=<run-id>"` on macOS.
+   - If you create multiple runs, give the user one per-run web-app URL for each run and, if opening the browser is useful, open each run's URL individually instead of the generic runs list.
    - Do not keep polling or waiting for the run automatically. Stop and wait for the user to tell you what to do next.
    - Expect follow-up requests such as checking a specific run, submitting OTP or magic-link input for a specific run, cancelling a run, or downloading artifacts after success.
 9. When the user later asks you to inspect a specific run, branch on the result:
@@ -73,7 +74,7 @@ Use this escalation pattern:
 | Store an API key only | `auth set-key` |
 | Create or inspect saved target-app credentials | `credentials ...` |
 | Start a new demo recording run | `runs create` |
-| Tell the user where to monitor run progress | open [app.slideshot.ai](https://app.slideshot.ai) |
+| Tell the user where to monitor run progress | open `https://app.slideshot.ai/?runId=<run-id>` |
 | Inspect one run in detail | `runs status` |
 | Continue an OTP or magic-link flow | `runs input` |
 | Cancel an existing run if the user explicitly asks for it | `runs cancel` |
@@ -129,6 +130,6 @@ Weak:
 - Saved credential matching depends on the target URL hostname matching the credential domain.
 - Email-only saved credentials are valid because target-app credential passwords are optional.
 - If no customization options were specified, ask once about `video.blur_emails`, `video.shortcuts`, and `video.background` before you create the run.
-- After creating a run, point the user to the web app for monitoring instead of keeping the agent occupied waiting on status changes.
+- After creating a run, point the user to the per-run web-app URL `https://app.slideshot.ai/?runId=<run-id>` instead of the generic runs list, and do the same for each run when multiple runs were started.
 
 See [the reference guide](references/REFERENCE.md) for concrete commands, option JSON examples, web-app monitoring guidance, and failure-recovery patterns.
