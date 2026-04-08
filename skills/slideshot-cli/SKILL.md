@@ -17,7 +17,7 @@ Use this skill when the task is record a demo video of a feature of specified us
    - Prefer API-key auth over CLI login. The default path is to ask whether the user already has a Slideshot account, guide them to create an account or log in in the web app at [app.slideshot.ai](https://app.slideshot.ai) if needed, then ask them to create an API key there and paste it so you can run `auth set-key`.
    - If it helps, open [app.slideshot.ai](https://app.slideshot.ai) for the user in the system browser while they create an account, sign in, or generate the API key.
    - If the user already has an API key, prefer `auth set-key` immediately instead of guiding them through CLI login.
-   - Use `auth login` only when the user explicitly prefers CLI login or when the workflow needs a signed-in user session for account-scoped commands such as `runs list` or `feedback`.
+   - Use `auth login` only when the user explicitly prefers CLI login or when you specifically need a session-only account-management flow.
    - When you do need CLI login, ask whether the user already has a Slideshot account or wants to set one up first.
    - When the installed CLI supports it, prefer `auth login --email <email> --email-only` because it matches Slideshot's passwordless flow and can create the account if it does not exist yet.
    - Use email+password login when the user already has a password, explicitly prefers that flow, or the CLI build on the machine does not expose `--email-only`.
@@ -47,7 +47,7 @@ Use this skill when the task is record a demo video of a feature of specified us
    - `awaiting_input`: surface the prompt to the user and continue with `runs input`.
    - `failed` or `cancelled`: inspect status, identify the likely cause, and retry with a better goal, better credentials, or different options.
 10. If the user asks to stop a run, if a queued or running run is clearly wrong, or if a duplicate run was started by mistake, cancel it with `runs cancel <run-id>`.
-11. When the run fails and an issue looks like a product bug or a missing feature, offer to send feedback with the related run ID. The CLI feedback command requires a signed-in user session.
+11. When the run fails and an issue looks like a product bug or a missing feature, offer to send feedback with the related run ID.
    - If the user is generally frustrated, reports a product problem, or shares a feature request, offer to send that feedback with the CLI feedback command even if it is not tied to a failed run.
 12. When the run is complete, the user should download the resulting demo video files or at least be informed that they have the option to download the raw video recording or the editing demo video MP4 files.
 

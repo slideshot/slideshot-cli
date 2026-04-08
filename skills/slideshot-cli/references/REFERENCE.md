@@ -24,7 +24,7 @@ Preferred API-key setup:
 npx -y slideshot-cli auth set-key srk_...
 ```
 
-Only prefer CLI login when the user explicitly wants it or when the workflow needs a signed-in user session for account-scoped commands such as `runs list` or `feedback`.
+Only prefer CLI login when the user explicitly wants it or when you specifically need a session-only account-management flow.
 
 Before running a login command, ask whether the user already has a Slideshot account or wants to set one up now.
 
@@ -56,8 +56,8 @@ Notes:
 - Default to `--email-only` when available because it matches Slideshot's passwordless behavior and can create the account if it does not already exist.
 - If the installed CLI help on the machine does not show `--email-only`, use the best available login flow on that build and mention the mismatch.
 - Command auth resolution prefers `--api-key`, then `SLIDESHOT_API_KEY`, then a stored local API key, then a stored user session when the command supports it.
-- `runs list` and `feedback` require a signed-in user session.
-- `runs create` works well with API-key auth, but API-key-only auth still lacks account-scoped commands like `runs list` and CLI `feedback`.
+- `/v1/user/credentials`, `/v1/user/runs*`, `/v1/user/feedback`, and direct artifact downloads work with API-key auth.
+- Session auth is still relevant for session-only account-management surfaces such as billing or API-key management.
 
 ## Saved credentials for the target app
 
@@ -270,6 +270,5 @@ npx -y slideshot-cli feedback "The run stopped after login even though the dashb
 
 Important:
 
-- The CLI `feedback` command uses the signed-in user session, not just an API key.
-- If only an API key is configured, ask the user whether they want to sign in first so the feedback can be submitted from the CLI.
+- The CLI `feedback` command can be used with API-key auth.
 - If the user is generally frustrated or has a feature request, you can still use `feedback` even if the issue is not tied to a failed run.
