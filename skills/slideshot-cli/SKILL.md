@@ -14,11 +14,13 @@ Use this skill when the task is record a demo video of a feature of specified us
 2. Keep the CLI in JSON mode by default. Use `--output text` only when you need to present the result directly to the user.
 3. Start with auth preflight when auth state matters:
    - Run `auth status` first if you need to know whether login, a user session, or an API key is already available locally.
-   - Prefer `auth login` over `auth set-key`. Login is the default because it stores the user session and usually creates a local API key too, which gives broader CLI coverage than an API key alone.
-   - Ask the user whether they already have a Slideshot account or want to set one up before you run the login command.
-   - When the installed CLI supports it, prefer `auth login --email <email> --email-only` by default because it matches Slideshot's passwordless flow and can create the account if it does not exist yet.
+   - Prefer API-key auth over CLI login. The default path is to ask whether the user already has a Slideshot account, guide them to create an account or log in in the web app at [app.slideshot.ai](https://app.slideshot.ai) if needed, then ask them to create an API key there and paste it so you can run `auth set-key`.
+   - If it helps, open [app.slideshot.ai](https://app.slideshot.ai) for the user in the system browser while they create an account, sign in, or generate the API key.
+   - If the user already has an API key, prefer `auth set-key` immediately instead of guiding them through CLI login.
+   - Use `auth login` only when the user explicitly prefers CLI login or when the workflow needs a signed-in user session for account-scoped commands such as `runs list` or `feedback`.
+   - When you do need CLI login, ask whether the user already has a Slideshot account or wants to set one up first.
+   - When the installed CLI supports it, prefer `auth login --email <email> --email-only` because it matches Slideshot's passwordless flow and can create the account if it does not exist yet.
    - Use email+password login when the user already has a password, explicitly prefers that flow, or the CLI build on the machine does not expose `--email-only`.
-   - Use `auth set-key` only when the user explicitly wants API-key-only auth or already has a key and only needs basic run-management commands.
 4. Before creating a run, confirm the target URL, whether the app requires login, and ensure the user describes the flow they wish to record in detail.
 5. If the user has not already specified video customization, ask once before `runs create` whether they want any of these options:
    - blur visible emails during recording
@@ -70,8 +72,8 @@ Use this escalation pattern:
 | Need | Command |
 | --- | --- |
 | Check whether auth is available locally | `auth status` |
-| Sign in with full account access | `auth login` |
-| Store an API key only | `auth set-key` |
+| Prefer local auth setup after the user creates or logs into their account in the web app and generates an API key | `auth set-key` |
+| Sign in with full account access when a session is specifically needed | `auth login` |
 | Create or inspect saved target-app credentials | `credentials ...` |
 | Start a new demo recording run | `runs create` |
 | Tell the user where to monitor run progress | open `https://app.slideshot.ai/?runId=<run-id>` |

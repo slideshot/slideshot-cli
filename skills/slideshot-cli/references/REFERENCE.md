@@ -14,7 +14,17 @@ The CLI defaults to compact JSON output for automation. Add `--output text` only
 
 ## Authentication
 
-Prefer login over API-key-only setup. A stored login gives the user session and usually also a local API key, which covers more CLI workflows than an API key by itself.
+Prefer API-key setup over CLI login. The default path is to ask whether the user already has a Slideshot account, send them to [app.slideshot.ai](https://app.slideshot.ai) to create an account or log in if needed, then ask them to create an API key there and paste it so you can configure `auth set-key`.
+
+If useful, open [app.slideshot.ai](https://app.slideshot.ai) in the system browser while the user completes account creation, sign-in, or API-key generation.
+
+Preferred API-key setup:
+
+```bash
+npx -y slideshot-cli auth set-key srk_...
+```
+
+Only prefer CLI login when the user explicitly wants it or when the workflow needs a signed-in user session for account-scoped commands such as `runs list` or `feedback`.
 
 Before running a login command, ask whether the user already has a Slideshot account or wants to set one up now.
 
@@ -31,10 +41,9 @@ npx -y slideshot-cli auth login --email you@example.com
 printf '%s' 'secret' | npx -y slideshot-cli auth login --email you@example.com --password-stdin
 ```
 
-Store or inspect an API key only when the user explicitly wants key-only auth or already has a key:
+Useful commands while guiding API-key setup:
 
 ```bash
-npx -y slideshot-cli auth set-key srk_...
 npx -y slideshot-cli auth status
 npx -y slideshot-cli auth env --shell sh --output text
 ```
@@ -42,12 +51,13 @@ npx -y slideshot-cli auth env --shell sh --output text
 Notes:
 
 - `auth status` is the quickest way to discover whether the CLI already has a stored user session, a stored API key, and which auth file path is in use.
+- `auth set-key` is the preferred local auth setup flow because it is simpler to guide reliably in chat once the user has an account and can generate a key in the web app.
 - `auth login` stores the user session locally and creates a local API key by default unless `--skip-api-key` is passed.
 - Default to `--email-only` when available because it matches Slideshot's passwordless behavior and can create the account if it does not already exist.
 - If the installed CLI help on the machine does not show `--email-only`, use the best available login flow on that build and mention the mismatch.
 - Command auth resolution prefers `--api-key`, then `SLIDESHOT_API_KEY`, then a stored local API key, then a stored user session when the command supports it.
 - `runs list` and `feedback` require a signed-in user session.
-- `runs create` can bootstrap a local API key from a stored user session if needed, but API-key-only auth still lacks account-scoped commands like `runs list`.
+- `runs create` works well with API-key auth, but API-key-only auth still lacks account-scoped commands like `runs list` and CLI `feedback`.
 
 ## Saved credentials for the target app
 
