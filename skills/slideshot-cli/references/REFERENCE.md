@@ -155,6 +155,7 @@ Important details:
   - `video.blur_emails`
   - `video.shortcuts`
   - `video.background` with `none`, `solid`, or `gradient`
+  - `artifacts.gif` for optional `demo.gif` export (default `false`)
 - If the user says they have no preference, keep the defaults by omitting those keys instead of inventing style choices.
 
 ## Status, input, and the web app
@@ -214,6 +215,7 @@ Stable public artifact names:
 - `raw.mp4`
 - `demo.mp4`
 - `plan.json`
+- `demo.gif` when `options.artifacts.gif=true`
 
 ## Using `schema` to avoid guessing
 

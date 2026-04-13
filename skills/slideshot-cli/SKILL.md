@@ -26,6 +26,7 @@ Use this skill when the task is record a demo video of a feature of specified us
    - blur visible emails during recording
    - show keyboard shortcuts in `demo.mp4`
    - add a demo-video background (`none`, `solid`, or `gradient`; collect colors if needed)
+   - export `demo.gif` via `options.artifacts.gif` (default `false`)
    If the user has no preference, say you will use the defaults and omit those options.
 6. If the demo requires login, do credential preflight before starting the run:
    - Check saved credentials for the target hostname first.
@@ -49,7 +50,7 @@ Use this skill when the task is record a demo video of a feature of specified us
 10. If the user asks to stop a run, if a queued or running run is clearly wrong, or if a duplicate run was started by mistake, cancel it with `runs cancel <run-id>`.
 11. When the run fails and an issue looks like a product bug or a missing feature, offer to send feedback with the related run ID.
    - If the user is generally frustrated, reports a product problem, or shares a feature request, offer to send that feedback with the CLI feedback command even if it is not tied to a failed run.
-12. When the run is complete, the user should download the resulting demo video files or at least be informed that they have the option to download the raw video recording or the editing demo video MP4 files.
+12. When the run is complete, the user should download the resulting artifacts or at least be informed that they can download `raw.mp4`, `demo.mp4`, and `plan.json`, plus `demo.gif` when they explicitly opted into GIF export.
 
 ## Prerequisites
 
@@ -126,12 +127,12 @@ Weak:
 ## Operational notes
 
 - Use `schema` instead of guessing request or response shapes.
-- Stable public artifact names are `raw.mp4`, `demo.mp4`, and `plan.json`.
+- Stable public artifact names are `raw.mp4`, `demo.mp4`, and `plan.json`. `demo.gif` is also a public artifact when `options.artifacts.gif=true`.
 - When a run is blocked on OTP or magic-link input, continue the existing run with `runs input` instead of starting over.
 - Avoid redundant reruns. If a run already succeeded, download artifacts from that run instead of creating another one. If it is awaiting input, continue it instead of replacing it.
 - Saved credential matching depends on the target URL hostname matching the credential domain.
 - Email-only saved credentials are valid because target-app credential passwords are optional.
-- If no customization options were specified, ask once about `video.blur_emails`, `video.shortcuts`, and `video.background` before you create the run.
+- If no customization options were specified, ask once about `video.blur_emails`, `video.shortcuts`, `video.background`, and `artifacts.gif` before you create the run. `artifacts.gif` defaults to `false`, so omit it unless the user explicitly wants GIF export.
 - After creating a run, point the user to the per-run web-app URL `https://app.slideshot.ai/?runId=<run-id>` instead of the generic runs list, and do the same for each run when multiple runs were started.
 
 See [the reference guide](references/REFERENCE.md) for concrete commands, option JSON examples, web-app monitoring guidance, and failure-recovery patterns.
