@@ -1,0 +1,21 @@
+{
+  "name": "slideshot",
+  "version": "0.1.0",
+  "description": "Record polished product demo videos of web apps from a natural-language flow description, using the hosted Slideshot MCP server.",
+  "author": {
+    "name": "Slideshot",
+    "url": "https://slideshot.ai"
+  },
+  "homepage": "https://slideshot.ai",
+  "repository": "https://github.com/slideshot/slideshot-cli",
+  "license": "MIT",
+  "keywords": [
+    "slideshot",
+    "demo",
+    "video",
+    "screencast",
+    "recording",
+    "mcp",
+    "browser-automation"
+  ]
+}
