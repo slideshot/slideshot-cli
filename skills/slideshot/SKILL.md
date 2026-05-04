@@ -24,16 +24,24 @@ If neither MCP tools nor a shell are available, tell the user the Slideshot conn
    - The target URL.
    - Whether the app requires login.
    - The flow the user wants recorded, in enough detail to write a single coherent goal.
-3. If the user has not specified video customization, ask once before creating the run whether they want any of these options. Ask the questions one at a time, do not bundle them, and explain what each option does instead of just naming the field:
+3. **Creating a run is billable and produces a user-facing video.** Wrong assumptions waste both time and money. Before calling the create-run tool / command:
+   - You **MUST** ask the user about any unspecified customization that could materially affect the recording, unless the user already provided it.
+   - **Never invent values on the user's behalf.** If the user has no preference for an option, omit it instead of guessing.
+   - **Do not call create-run in the same turn as the user's initial request when any of the choices below are still unspecified.** Ask first, then call after the user responds.
+   - For login-required runs, **do not omit `options.auth`**. Set it explicitly to `default` or to a specific saved credential after confirming the user's intent. Omitting `auth` for a login-required flow is a bug, not a default.
+
+   Ask the questions one at a time, do not bundle them, and explain what each option does instead of just naming the field. When a structured question tool is available in the runtime (e.g. `AskUserQuestion`, `request_user_input`), prefer it over free-text prompts so the user can pick from concrete options. Cover:
    - Login handling: no login, default saved credential for the target hostname, or a specific saved credential.
    - Blur visible emails during recording.
    - Show keyboard shortcuts in the demo video.
    - Cursor style (`small`, `default`, `large`, or `none`).
    - Video background (`solid` or `gradient`; collect colors and direction if needed).
-   - Output video size and inner content layout (padding or scale).
+   - Output video size. Present these options: 1920x1080 Full HD (default), 1280x720 HD, 1080x1080 Square, or Custom. If the user picks Custom, ask for the width and height.
+   - Inner content layout (padding or scale around the captured browser content).
    - Export `demo.gif` as well as MP4 (default `false`, opt-in only).
 
-   If the user has no preference for an option, omit it instead of inventing a value.   
+   **Anti-pattern:** immediately calling `list_credentials` and `create_run` for a login-required request without first confirming customization choices.
+   **Do this instead:** ask focused follow-up questions covering each still-unspecified auth, video, and artifact option. Only call create-run after the user has answered.
 4. If the demo requires login, do credential preflight before creating the run:
    - List saved credentials and look for one whose domain matches the target URL hostname.
    - Prefer the matching default credential when one exists. The auth source for that case is `default`.
@@ -41,6 +49,7 @@ If neither MCP tools nor a shell are available, tell the user the Slideshot conn
    - For genuinely public flows, use auth source `none` (or omit auth entirely).
    - If no suitable saved credential exists, prefer asking the user to add it securely in the web app at [app.slideshot.ai](https://app.slideshot.ai) instead of pasting long-lived secrets into chat. Only create credentials from chat when the user explicitly asks for it.
    - Keep the run target URL hostname aligned with the credential domain. Credential matching is hostname-based.
+   - For login-required runs, set `options.auth` explicitly. Do not leave it unset and assume the runtime will pick something sensible.
 5. Write one strong goal per run that describes a single coherent demo path with a clear visible end state. If the description is underspecified, ask 1–2 focused follow-up questions before creating the run.
    - If the user needs multiple flows, kick off each recording run one by one. The runs enter the queue and are processed in order.
 6. After creating a run:
