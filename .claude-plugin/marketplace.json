@@ -1,0 +1,23 @@
+{
+  "name": "slideshot-skills",
+  "owner": {
+    "name": "Slideshot",
+    "url": "https://slideshot.ai"
+  },
+  "metadata": {
+    "description": "Official Slideshot skills for AI agents.",
+    "version": "0.2.0",
+    "repository": "https://github.com/slideshot/skills"
+  },
+  "plugins": [
+    {
+      "name": "slideshot",
+      "source": "./skills/slideshot",
+      "description": "Record polished demo videos of web apps from a natural-language flow description.",
+      "strict": false,
+      "skills": [
+        "./skills/slideshot"
+      ]
+    }
+  ]
+}
