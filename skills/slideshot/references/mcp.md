@@ -79,10 +79,65 @@ Opt into GIF export:
 }
 ```
 
+Branded intro card (text-only, gradient background):
+
+```json
+{
+  "intro": {
+    "template": "simple-line-by-line-slide",
+    "content": { "text": "Create a Q2 revenue report" },
+    "style": {
+      "background": {
+        "type": "gradient",
+        "from": "#0B1020",
+        "to": "#1D4ED8",
+        "direction": "diagonal"
+      },
+      "textColor": "#FFFFFF"
+    }
+  }
+}
+```
+
+Branded intro card (logo + text, layered over the demo's first frame):
+
+```json
+{
+  "intro": {
+    "template": "simple-line-by-line-slide-with-logo-and-backdrop",
+    "content": {
+      "text": "Create a Q2 revenue report",
+      "logoUrl": "https://example.com/logo.png"
+    },
+    "style": {
+      "backdropColor": "#0B1020",
+      "textColor": "#FFFFFF"
+    }
+  }
+}
+```
+
+Logo-only intro:
+
+```json
+{
+  "intro": {
+    "template": "simple-logo",
+    "content": { "logoUrl": "https://example.com/logo.png" },
+    "style": {
+      "background": { "type": "solid", "color": "#0B1020" }
+    }
+  }
+}
+```
+
+See the [Intro card guidance](../SKILL.md#intro-card-guidance) section for the full template list and how to walk the user through choices.
+
 Notes:
 
 - Omit `auth` entirely or use `{ "source": "none" }` for genuinely public flows.
-- Use nested `auth` and `video` objects. Legacy flat option keys are not supported.
+- Use nested `auth`, `video`, and `intro` objects. Legacy flat option keys are not supported.
+- Omit `intro` entirely unless the user explicitly asked for an intro card.
 
 ## Awaiting input
 

@@ -38,10 +38,11 @@ If neither MCP tools nor a shell are available, tell the user the Slideshot conn
    - Video background (`solid` or `gradient`; collect colors and direction if needed).
    - Output video size. Present these options: 1920x1080 Full HD (default), 1280x720 HD, 1080x1080 Square, or Custom. If the user picks Custom, ask for the width and height.
    - Inner content layout (padding or scale around the captured browser content).
+   - Branded intro card prepended to the demo (optional, opt-in only). If the user wants one, walk them through the template, copy, and style as described in [Intro card guidance](#intro-card-guidance).
    - Export `demo.gif` as well as MP4 (default `false`, opt-in only).
 
    **Anti-pattern:** immediately calling `list_credentials` and `create_run` for a login-required request without first confirming customization choices.
-   **Do this instead:** ask focused follow-up questions covering each still-unspecified auth, video, and artifact option. Only call create-run after the user has answered.
+   **Do this instead:** ask focused follow-up questions covering each still-unspecified auth, video, intro, and artifact option. Only call create-run after the user has answered.
 4. If the demo requires login, do credential preflight before creating the run:
    - List saved credentials and look for one whose domain matches the target URL hostname.
    - Prefer the matching default credential when one exists. The auth source for that case is `default`.
@@ -98,6 +99,39 @@ If the request is underspecified, ask 1–3 focused follow-up questions about th
 `Show the product.`
 
 `Go through onboarding, settings, billing, analytics, and admin.`
+
+## Intro card guidance
+
+The intro is an optional branded card prepended to the polished demo video. It is fully opt-in — omit `options.intro` entirely unless the user has asked for one. When the user does want an intro, walk them through the choices below one at a time. Do not invent the copy, colors, or logo — propose options and let the user confirm.
+
+### Walk the user through the choices
+
+1. **Confirm they want an intro at all.** It is optional, adds runtime cost, and not every demo benefits from one. Skip the rest of this section if they decline.
+2. **Pick a template.** Describe the six templates in plain language (see the table below), ask which one fits, and confirm before moving on. The template choice determines which content and style fields are required.
+3. **Collect the content.** Templates that include text need a single line of copy (max 120 characters). Templates that include a logo need an absolute `http://` or `https://` URL pointing to the logo image. The image is fetched once before recording starts, so it must be reachable.
+4. **Collect the style.** Most templates take a `background` (solid color or gradient) and a `textColor` hex. The backdrop template instead takes a `backdropColor` and a `textColor`. The logo-only template takes only a `background`.
+5. **Propose a title for text templates.** Write a short, demo-relevant title from the run goal — for example, "Create a Q2 revenue report" for a goal that ends on the analytics dashboard. Show it to the user, let them edit it, then use the confirmed copy. Never silently use your own draft.
+
+### Template reference
+
+| Template | What it shows | Required content | Required style |
+| --- | --- | --- | --- |
+| `simple` | Centered text, mask-reveal-up animation. Clean and minimal. | `text` | `background`, `textColor` |
+| `simple-spring-scale-in` | Centered text, springy scale-in animation. More energetic than `simple`. | `text` | `background`, `textColor` |
+| `simple-line-by-line-slide` | Left-aligned text that slides in line by line. Good for slightly longer copy. | `text` | `background`, `textColor` |
+| `simple-line-by-line-slide-with-logo` | Same line-by-line slide, with a static logo above the text. Use when the user wants light branding alongside copy. | `text`, `logoUrl` | `background`, `textColor` |
+| `simple-line-by-line-slide-with-logo-and-backdrop` | Logo + left-aligned text layered over the demo's first frame, with a single-color diagonal opacity gradient (opaque at bottom-left, transparent at top-right). Strong branding without a flat background. | `text`, `logoUrl` | `backdropColor`, `textColor` |
+| `simple-logo` | Logo only, centered, with a fade + rise + blur curve. No text at all. | `logoUrl` | `background` |
+
+### Constraints
+
+- `text` is required for every template except `simple-logo` and must be 1–120 characters.
+- `logoUrl` is required for the three logo templates and must be an absolute `http://` or `https://` URL.
+- All colors are `#RRGGBB` hex strings.
+- Gradient `background` takes `from`, `to`, and an optional `direction` (`vertical`, `horizontal`, or `diagonal`; defaults to `diagonal`).
+- The `backdrop` template's `backdropColor` is a single solid color rendered as a diagonal opacity gradient over the demo's first frame — there is no `background` field on that template.
+
+See the runtime references for concrete `options.intro` JSON examples.
 
 ## Operational notes
 
