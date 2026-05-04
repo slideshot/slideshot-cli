@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "slideshot": {
-      "type": "http",
-      "url": "https://api.slideshot.ai/mcp"
-    }
-  }
-}
