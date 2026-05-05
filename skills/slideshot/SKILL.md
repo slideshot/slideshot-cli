@@ -107,7 +107,7 @@ The intro is an optional branded card prepended to the polished demo video. It i
 ### Walk the user through the choices
 
 1. **Confirm they want an intro at all.** It is optional, adds runtime cost, and not every demo benefits from one. Skip the rest of this section if they decline.
-2. **Pick a template.** Describe the six templates in plain language (see the table below), ask which one fits, and confirm before moving on. The template choice determines which content and style fields are required.
+2. **Pick a template. Present *all six* templates to the user and let them choose — do not pre-filter, do not recommend a single one based on your guess of what fits.** Enumerate every row of the [Template reference](#template-reference) table by name with a one-line plain-language description of what each shows. The user picks. Confirm the selection before moving on. The template choice determines which content and style fields are required.
 3. **Collect the content.** Templates that include text need a single line of copy (max 120 characters). Templates that include a logo need an absolute `http://` or `https://` URL pointing to the logo image. The image is fetched once before recording starts, so it must be reachable.
 4. **Collect the style.** Most templates take a `background` (solid color or gradient) and a `textColor` hex. The backdrop template instead takes a `backdropColor` and a `textColor`. The logo-only template takes only a `background`.
 5. **Propose a title for text templates.** Write a short, demo-relevant title from the run goal — for example, "Create a Q2 revenue report" for a goal that ends on the analytics dashboard. Show it to the user, let them edit it, then use the confirmed copy. Never silently use your own draft.
