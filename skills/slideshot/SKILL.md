@@ -1,12 +1,24 @@
 ---
 name: slideshot
 description: Use Slideshot to record demo videos of a web application from a natural-language flow description. Use it when the user wants the agent to create a new demo video recording of a target web app, demonstrate a feature or specific flow, manage saved target-app credentials in Slideshot, cancel runs, inspect a specific run, fetch demo artifacts, or send Slideshot product feedback.
-last-updated: 2026-05-04
+last-updated: 2026-05-05
 ---
 
 # Slideshot
 
 Use this skill when the task is to record a demo video of a feature or specified user flow of a web application. Slideshot lets you kick off a new recording run, refine the run goal, manage saved target-app credentials, inspect run status, fetch artifacts, or send product feedback.
+
+> **Freshness check**: If more than 30 days have passed since the `last-updated` date in the frontmatter above, tell the user this skill may be outdated and point them to the update table below.
+
+## Keeping this skill updated
+
+**Source**: [github.com/slideshot/skills](https://github.com/slideshot/skills)
+
+| Installation | How to update |
+| --- | --- |
+| Claude Code plugin | `/plugin marketplace update slideshot-skills` then `/plugin update slideshot@slideshot-skills` |
+| `npx skills` | `npx skills update` |
+| Manual | Pull the latest repo and re-upload or re-copy `skills/slideshot/` into your skill directory |
 
 ## Choose a runtime
 
